@@ -107,4 +107,36 @@ const getUsers = async (req, res) => {
   }
 };
 
-module.exports = { loginUser, registerUser, getMe };
+const updateUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.title = req.body.title ?? user.title;
+    user.description = req.body.description ?? user.description;
+    user.status = req.body.status ?? user.status;
+
+    const updatedTask = await user.save();
+    res.json(updatedTask);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const user = req.resource; // from checkOwnership middleware
+
+    await user.deleteOne();
+    res.status(204).send(); // No need body
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = { loginUser, registerUser, getMe, getUsers };
