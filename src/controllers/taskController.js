@@ -47,6 +47,8 @@ const getTasks = async (req, res) => {
       query.title = { $regex: keyword, $options: "i" };
     }
 
+    console.log("query", query)
+
     const [tasks, total] = await Promise.all([
       Task.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
       Task.countDocuments(query),
